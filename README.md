@@ -94,3 +94,14 @@ CREATE TABLE IF NOT EXISTS skill_gap_analysis (
     *   `supabaseUrl` / `supabaseKey`: Your Supabase project URL and anonymous key.
 5.  Link your Google Drive, Supabase, and Gmail credentials.
 6.  Activate the workflow!
+
+---
+
+## 🤝 Collaboration & Contact
+
+For collaboration, support, or optimization queries, feel free to reach out:
+
+*   **Email**: [skt23122004@gmail.com](mailto:skt23122004@gmail.com)
+*   **LinkedIn**: [Satish Tripathy](https://www.linkedin.com/in/satish-tripathy-64755522b)
+*   **GitHub**: [anonymous23122004](https://github.com/anonymous23122004)
+

@@ -14,6 +14,32 @@ An enterprise-grade autonomous job hunting pipeline built with **n8n**, **Google
 
 ---
 
+## 📊 System Architecture
+
+The workflow operates as an automated, closed-loop pipeline running on a scheduled trigger:
+
+```mermaid
+graph TD
+    Trigger([Daily 7 AM Trigger]) --> Config[Workflow Configuration]
+    Config --> FetchResume[Get Master Resume <br> Google Drive / Docs]
+    FetchResume --> ScrapeJobs[Apify LinkedIn Jobs Scraper]
+    ScrapeJobs --> ParseJobs[Parse & Filter Scraped Jobs]
+    ParseJobs --> CheckDB{Already Processed? <br> Supabase Query}
+    
+    CheckDB -- Yes --> Skip[Skip / Stop]
+    CheckDB -- No --> Gemini[ATS Optimizer Agent <br> Google Gemini 2.5 Flash]
+    
+    Gemini --> ParseLaTeX[Build LaTeX Resume <br> Custom JS Parsing Engine]
+    ParseLaTeX --> CompilePDF[Compile LaTeX to PDF <br> LuaLaTeX API]
+    CompilePDF --> UploadDrive[Upload Resume to Google Drive]
+    UploadDrive --> ShareDrive[Share PDF - Anyone with Link]
+    
+    ShareDrive --> LogDB[Store Application Record <br> Supabase DB]
+    LogDB --> EmailSummary[Gmail Summary Report]
+```
+
+---
+
 ## 🛠️ System Architecture Upgrades (Fresher Strategy)
 
 This repository includes a blueprint for **8 additive upgrades** designed to maximize interview conversion rates for B.Tech CS (AI/ML) fresher profiles targeting non-coding AI roles:
@@ -37,6 +63,19 @@ This repository includes a blueprint for **8 additive upgrades** designed to max
 *   **Apify**: Free account for LinkedIn scraping credits.
 *   **Supabase**: Free Postgres database instance.
 *   **Google Drive & Gmail**: For document retrieval, storage, and emails.
+
+### 💸 Cost & Free-Tier Limits (100% Free-to-Run Setup)
+
+This pipeline is specifically designed to run **completely free of charge** by leveraging the generous free tiers of each service:
+
+| Service | Usage in Workflow | Free-Tier Limits | Cost / Action Required |
+| :--- | :--- | :--- | :--- |
+| **n8n** | Workflow orchestration | Unlimited (Self-hosted locally) | **$0** (Free if run on your local machine using Docker/npm/desktop). |
+| **Google AI Studio** | Gemini 2.5 Flash LLM optimizer | 15 Requests/Min, 1,500 Requests/Day | **$0** (Free Tier is more than sufficient for running 10-20 jobs a day). |
+| **Apify** | LinkedIn Jobs Scraper | $5/month free platform credits | **$0** (LinkedIn scraping costs ~$0.005 per job. Daily scraping easily fits within the free $5 credit). |
+| **Supabase** | Duplicate checking & application logging | 2 Free Projects, 500MB DB space | **$0** (Storing text logs for thousands of applications consumes less than 5MB). |
+| **Google Drive & Gmail** | Resume reading, storage, and emails | 15GB shared space | **$0** (Uses standard free personal Google Account). |
+| **LaTeX PDF Compiler** | Compiling LaTeX source to PDF | Public Sync Endpoint | **$0** (Using the free public endpoint `latex.ytotech.com/builds/sync` running LuaLaTeX). |
 
 ### 2. Supabase Table Setup
 Execute the following schema migrations in your Supabase SQL Editor:
